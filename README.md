@@ -1,9 +1,9 @@
-# COMP3221 Assignment 2 – Blockchain Node
+# Blockchain Node
 
 ## Language & Dependencies
 
 - Python 3.10+
-- **PyNaCl** (allowed) – Ed25519 signature verification
+- **PyNaCl** – Ed25519 signature verification
 
 Install: `pip install PyNaCl`
 

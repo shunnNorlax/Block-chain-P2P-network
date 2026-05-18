@@ -222,10 +222,10 @@ Binding the socket in step 3 (before starting any threads) ensures the port is o
 ## Key Design Decisions
 
 **Single `Blockchain` lock instead of fine-grained locks**
-The chain, nonces, and pool are almost always accessed together (e.g., commit updates all three). A coarse lock is simpler and correct; lock contention is not a bottleneck because the consensus round serialises most write activity.
+The blockchain state components — the chain, nonce table, and transaction pool — are typically accessed together (for example, during block commitment, all three are updated simultaneously). Therefore, using a coarse-grained lock simplifies the design and ensures correctness. Lock contention is also not a significant concern because the consensus process serializes most write operations.
 
 **Dedup at two levels**
-Transactions are deduplicated both in `Node.handle_incoming_transaction` (mempool key check) and inside `blockchain.pool_add`. The double check prevents a race where two concurrent `PeerHandler` threads accept the same transaction before either commits to the pool.
+Transactions are deduplicated both in `Node.handle_incoming_transaction` (mempool key check) and inside `blockchain.pool_add`. The double check prevents a race condition where two concurrent `PeerHandler` threads accept the same transaction before either commits to the pool.
 
 **Proposal exchange is concurrent, consensus round is serialised**
 The `_round_lock` prevents two rounds from running simultaneously (e.g., if a peer triggers a round while we are already mid-round). Within a round, all peer exchanges run in parallel threads to minimise wall-clock time.
